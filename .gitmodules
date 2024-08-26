@@ -1,0 +1,6 @@
+[submodule "sv-transformer-lib"]
+	path = sv-transformer-lib
+	url = https://gitlab.com/sosy-lab/software/sv-transformer-lib
+[submodule "metaval-c-2.0"]
+	path = metaval-c-2.0
+	url = https://gitlab.com/sosy-lab/software/metaval-c-2.0

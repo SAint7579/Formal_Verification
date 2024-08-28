@@ -1,6 +1,7 @@
 from openai import OpenAI
 import configparser
 import time
+from ast import literal_eval
 
 config = configparser.ConfigParser()
 config.read('./config.ini')
@@ -73,24 +74,15 @@ def submit_message(user_message):
         function_call="auto"
     )
 
-    return response
+    if response.choices[0].finish_reason == "function_call":
+        MESSAGES.append(
+            {
+                "role": "assistant",
+                "function_call": {"name": response.choices[0].message.function_call.name,
+                                  "arguments": response.choices[0].message.function_call.arguments}
+            }
+        )
 
-    
+    # MESSAGES.append()
+    return literal_eval(response.choices[0].message.function_call.arguments)['invariant_list']
 
-def test_c_code(file_location):
-    with open(file_location, 'r') as file:
-        code = file.read()
-    ## Add line numbers to the code
-    code = code.split('\n')
-    code_with_line_numbers = []
-    for i, line in enumerate(code):
-        code_with_line_numbers.append(f'{i+1}: {line}')
-    code_with_line_numbers = '\n'.join(code_with_line_numbers)
-
-    response = submit_message(f"Check for invariants in the following: {code_with_line_numbers}")
-
-    print(response)
-
-
-if __name__ == '__main__':
-    test_c_code('./Dataset/Raw Codes/test_code_1.c')

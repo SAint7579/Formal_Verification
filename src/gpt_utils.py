@@ -83,6 +83,43 @@ def submit_message(user_message):
             }
         )
 
-    # MESSAGES.append()
-    return literal_eval(response.choices[0].message.function_call.arguments)['invariant_list']
+        # MESSAGES.append()
+        return literal_eval(response.choices[0].message.function_call.arguments)['invariant_list']
+    else:
+        return None
+
+def submit_function_response(success, debug_message, reason):
+    function_name = MESSAGES[-1]['function_call']['name']
+    MESSAGES.append(
+        {
+            "role": "function",
+            "name": function_name,
+            "content": str({
+                "output": success,
+                "debug_message": debug_message,
+                "reason": reason
+            })
+        }
+    )
+    response = client.chat.completions.create(
+        model="gpt-4o",
+        messages=MESSAGES,
+        functions=function,
+        function_call="auto"
+    )
+
+    if response.choices[0].finish_reason == "function_call":
+        MESSAGES.append(
+            {
+                "role": "assistant",
+                "function_call": {"name": response.choices[0].message.function_call.name,
+                                  "arguments": response.choices[0].message.function_call.arguments}
+            }
+        )
+        return literal_eval(response.choices[0].message.function_call.arguments)['invariant_list']
+
+    else:
+        return None
+
+    
 

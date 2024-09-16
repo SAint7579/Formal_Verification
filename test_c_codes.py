@@ -103,6 +103,7 @@ def test_c_code(file_location):
         ## Getting invariants
         arguments = submit_message(f"Check for invariants in the following: {code_with_line_numbers}")
         invariants = []
+        print(arguments)
         for a in arguments:
             invariants.append(("loop_invariant", a['line_number'], a['invariant']))
             
@@ -132,5 +133,5 @@ def test_c_code(file_location):
     return verdict.name.lower(), invariants, reason
     
 if __name__ == '__main__':
-    output = test_c_code('./metaval-c-2.0/examples/terminator02-2_wrong.c')
+    output = test_c_code('./Dataset/Raw Codes/test_code_3.c')
     print(output)

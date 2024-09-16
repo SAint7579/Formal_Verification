@@ -48,10 +48,33 @@ for i in [i.id for i in client.beta.assistants.list().data if i.name == "invaria
     client.beta.assistants.delete(i)
 
 
-instructions=f'You are supposed to generate a loop invariant and function invariants for C codes. \
-              The format should be usable in witness and should be written in a C syntax. For example: "(i == (6) && sn == (10)) || (i == (2) && sn == (2))". \
-              Call the appropriate function as soon as you encounter a C code.  Create only one invariant per loop in the code. \
-              If you get a failuer, use the debug output to generate and test another invariant.'
+instructions=f"You are a helpful AI software assistant that reasons about how code behaves. Given a program,\
+you can find loop invariants, which can then be used to verify some property in the program.\
+Frama-C is a software verification tool for C programs. The input to Frama-C is a C program\
+file with ACSL (ANSI/ISO C Specification Language) annotations. You are only allowed to make function calls. Do not respond with text.\
+For the given program, find the necessary loop invariants of the while loop to help Frama-C verify the post-condition.\
+Instructions:\
+• Make a note of the pre-conditions or variable assignments in the program.\
+• Analyze the loop body and make a note of the loop condition.\
+• Output loop invariants that are true\
+(i) before the loop execution,\
+(ii) in every iteration of the loop and\
+(iii) after the loop termination,\
+such that the loop invariants imply the post condition.\
+• If a loop invariant is a conjunction, split it into its parts.\
+• Use the appropriate function to test if the invariats are correct. Create one invariant for each loop in the program.\
+• All the loops in the same line of code must be joined into a single invariant with &&s\
+Rules:\
+• **Do not use variables or functions that are not declared in the program.**\
+• **Do not make any assumptions about functions whose definitions are not given.**\
+• **All undefined variables contain garbage values. Do not use variables that have garbage\
+values.**\
+• **Do not use keywords that are not supported in ACSL annotations for loops.**\
+• **Variables that are not explicitly initialized, could have garbage values. Do not make\
+any assumptions about such values.**\
+• **Do not use the at(x, Pre) notation for any variable x.**\
+• **Do not use non-deterministic function calls.**\
+"
 
 MESSAGES = [
     {
